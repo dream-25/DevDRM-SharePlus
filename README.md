@@ -25,7 +25,7 @@ A simple file-sharing application built with React (TypeScript) for the frontend
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/dream-25/simple-file-sharing.git
+   git clone https://github.com/dream-25/DevDRM-SharePlus.git
    ```
 
 2. Navigate to the directory:
