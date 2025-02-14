@@ -20,34 +20,26 @@ A simple file-sharing application built with React (TypeScript) for the frontend
 ### Backend:
 
 - PHP
-- MySQL (for storing file metadata)
 
 ## Installation
-
-### Backend Setup:
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/dream-25/simple-file-sharing.git
-   cd simple-file-sharing/backend
-   ```
-2. Set up your MySQL database and update `config.php` with your database credentials.
-3. Start the PHP server:
-   ```bash
-   php -S localhost:8000
    ```
 
-### Frontend Setup:
-
-1. Navigate to the directory:
-2. Install dependencies:
+2. Navigate to the directory:
+3. Install dependencies:
    ```bash
    npm install
    ```
-3. Start the React development server:
+4. Start the React development server:
    ```bash
    npm run dev
    ```
+
+5. Note: But for actual file upload you will need a PHP based web server
+
 
 ## Screenshot
 ![Screenshot](screenshot.png)
