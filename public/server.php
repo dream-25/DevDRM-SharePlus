@@ -5,15 +5,19 @@ function generateTimePrefix() {
     return date('YmdHis');
 }
 
+function generateRandomString($length = 5) {
+    return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, $length);
+}
+
 function getUploadDirectory($extension) {
     $baseDir = 'uploads/';
     $typeDir = strtoupper($extension) . 's/';
     $fullDir = $baseDir . $typeDir;
-    
+
     if (!file_exists($fullDir)) {
         mkdir($fullDir, 0777, true);
     }
-    
+
     return $fullDir;
 }
 
@@ -25,25 +29,22 @@ try {
     $file = $_FILES['file'];
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $timePrefix = generateTimePrefix();
+    $randomString = generateRandomString();
     $originalName = $file['name'];
-    
-    // Remove time prefix for the public URL
-    $publicName = $originalName;
-    
-    // Add time prefix for storage
-    $storageName = $timePrefix . '_' . $originalName;
-    
+
+    // Ensure unique filename
+    $storageName = $timePrefix . '_' . $randomString . '_' . $originalName;
     $uploadDir = getUploadDirectory($extension);
     $uploadPath = $uploadDir . $storageName;
-    
+
     if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-        // Log the upload
-        $logMessage = date('Y-m-d H:i:s') . " - Uploaded: " . $originalName . " as " . $storageName . "\n";
-        file_put_contents('upload_log.txt', $logMessage, FILE_APPEND);
-        
-        // Generate share link
-        $shareLink = '/download.php?file=' . urlencode($publicName) . '&type=' . urlencode($extension);
-        
+        // Store mapping (original name | stored unique name)
+        $logData = $originalName . '|' . $storageName . "\n";
+        file_put_contents('file_mappings.txt', $logData, FILE_APPEND);
+
+        // Use unique filename in the download link
+        $shareLink = '/download.php?file=' . urlencode($storageName) . '&type=' . urlencode($extension);
+
         echo json_encode([
             'success' => true,
             'shareLink' => $shareLink

@@ -3,30 +3,39 @@ if (!isset($_GET['file']) || !isset($_GET['type'])) {
     die('Invalid request');
 }
 
-$fileName = $_GET['file'];
+$storageFileName = $_GET['file']; // Now, we directly receive the unique filename
 $fileType = strtoupper($_GET['type']);
 $uploadDir = 'uploads/' . $fileType . 's/';
 
-// Find the file with time prefix
-$files = glob($uploadDir . '*_' . $fileName);
-
-if (empty($files)) {
-    die('File not found');
-}
-
-$filePath = $files[0];
+// Validate file existence
+$filePath = $uploadDir . $storageFileName;
 
 if (!file_exists($filePath)) {
     die('File not found');
 }
 
+// Extract original filename from stored mapping
+$mappingFile = 'file_mappings.txt';
+$originalName = $storageFileName;
+
+if (file_exists($mappingFile)) {
+    $lines = file($mappingFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        list($original, $stored) = explode('|', $line);
+        if ($stored === $storageFileName) {
+            $originalName = $original;
+            break;
+        }
+    }
+}
+
 // Log the download
-$logMessage = date('Y-m-d H:i:s') . " - Downloaded: " . $fileName . "\n";
+$logMessage = date('Y-m-d H:i:s') . " - Downloaded: " . $originalName . " -> " . $storageFileName . "\n";
 file_put_contents('download_log.txt', $logMessage, FILE_APPEND);
 
 // Set headers for download
 header('Content-Type: application/octet-stream');
-header('Content-Disposition: attachment; filename="' . $fileName . '"');
+header('Content-Disposition: attachment; filename="' . $originalName . '"');
 header('Content-Length: ' . filesize($filePath));
 
 // Output file
